@@ -39,4 +39,15 @@ public class MedicineService {
         }
         return false;
     }
+
+    public boolean update(@Valid NewMedicineDto newMedicineDto) {
+        var medicine = medicineRepo.findByName(newMedicineDto.name());
+        if (medicine == null) {
+            return false;
+        }
+
+        medicineRepo.delete(medicine);
+        medicineRepo.save(medicine);
+        return true;
+    }
 }
