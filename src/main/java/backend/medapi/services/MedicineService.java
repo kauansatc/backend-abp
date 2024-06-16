@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import backend.medapi.dtos.NewMedicineDto;
 import backend.medapi.models.Medicine;
+import backend.medapi.repositories.DiseaseRepo;
 import backend.medapi.repositories.MedicineRepo;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -15,6 +16,9 @@ import jakarta.validation.constraints.NotBlank;
 public class MedicineService {
     @Autowired
     MedicineRepo medicineRepo;
+
+    @Autowired
+    DiseaseRepo diseaseRepo;
 
     public List<Medicine> getAll() {
         return medicineRepo.findAll();
@@ -28,6 +32,17 @@ public class MedicineService {
         var medicine = new Medicine();
         medicine.setName(newMedicineDto.name());
         medicine.setNeedsPrescription(newMedicineDto.needsPrescription());
+
+        for (var diseaseName : newMedicineDto.treatsFor()) {
+            var disease = diseaseRepo.findByName(diseaseName);
+            if (disease != null) {
+                medicine.addDisease(disease);
+            }
+
+            // TODO handle disease not found
+            throw new IllegalArgumentException("Disease not found: " + diseaseName);
+        }
+
         medicineRepo.save(medicine);
     }
 
