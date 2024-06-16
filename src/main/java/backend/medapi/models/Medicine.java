@@ -14,5 +14,22 @@ public class Medicine {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private String nome;
+    private String name;
+    private boolean needsPrescription;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+    
+    public void setNeedsPrescription(boolean needsPrescription) {
+        this.needsPrescription = needsPrescription;
+    }
+
+    public boolean getNeedsPrescription() {
+        return needsPrescription;
+    }
 }
