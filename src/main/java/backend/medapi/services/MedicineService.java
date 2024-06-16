@@ -30,4 +30,13 @@ public class MedicineService {
         medicine.setNeedsPrescription(newMedicineDto.needsPrescription());
         medicineRepo.save(medicine);
     }
+
+    public boolean delete(String name) {
+        var medicine = medicineRepo.findByName(name);
+        if (medicine != null) {
+            medicineRepo.delete(medicine);
+            return true;
+        }
+        return false;
+    }
 }
