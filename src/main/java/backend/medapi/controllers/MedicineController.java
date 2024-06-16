@@ -24,8 +24,11 @@ public class MedicineController {
 
     @PostMapping("/medicines")
     public ResponseEntity<?> create(@RequestBody @Valid NewMedicineDto newMedicineDto) {
-        medicineService.create(newMedicineDto);
+        if (medicineService.exists(newMedicineDto.name())) {
+            return ResponseEntity.badRequest().body("Medicine already exists");
+        }
 
+        medicineService.create(newMedicineDto);
         return ResponseEntity.ok("Medicine created");
     }
 }
