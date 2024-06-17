@@ -1,6 +1,5 @@
 package backend.medapi.models;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 import jakarta.persistence.Entity;
@@ -17,7 +16,7 @@ public class Medicine {
     private UUID id;
     private String name;
     private boolean needsPrescription;
-    private UUID[] treatsFor;
+    private String[] treatsFor;
 
     public void setName(String name) {
         this.name = name;
@@ -35,9 +34,11 @@ public class Medicine {
         return needsPrescription;
     }
 
-    public void addDisease(Disease disease) {
-        var arr = Arrays.copyOf(treatsFor, treatsFor.length + 1);
-        arr[arr.length - 1] = disease.getId();
-        treatsFor = arr;
+    public String[] getTreatsFor() {
+        return treatsFor;
+    }
+
+    public void setTreatsFor(String[] treatsFor) {
+        this.treatsFor = treatsFor;
     }
 }

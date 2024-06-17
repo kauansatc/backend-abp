@@ -16,11 +16,15 @@ public class Disease {
     private UUID id;
     private String name;
 
-    public Disease(String name) {
-        this.name = name;
-    }
-
     public UUID getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

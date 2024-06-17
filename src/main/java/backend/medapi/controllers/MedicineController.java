@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import backend.medapi.dtos.NewMedicineDto;
+import backend.medapi.dtos.UpdateMedicineDto;
 import backend.medapi.services.MedicineService;
 import jakarta.validation.Valid;
 
@@ -26,9 +27,9 @@ public class MedicineController {
     }
 
     @PostMapping("/medicines")
-    public ResponseEntity<?> create(@RequestBody @Valid NewMedicineDto newMedicineDto) {
+    public ResponseEntity<?> create(@RequestBody @Valid NewMedicineDto newDto) {
         try {
-            medicineService.create(newMedicineDto);
+            medicineService.create(newDto);
             return ResponseEntity.ok("Medicine created");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -45,10 +46,10 @@ public class MedicineController {
         }
     }
 
-    @PatchMapping("/medicines")
-    public ResponseEntity<?> update(@RequestBody @Valid NewMedicineDto newMedicineDto) {
+    @PatchMapping("/medicines/{name}")
+    public ResponseEntity<?> update(@PathVariable String name, @RequestBody @Valid UpdateMedicineDto updateDto) {
         try {
-            medicineService.update(newMedicineDto);
+            medicineService.update(name, updateDto);
             return ResponseEntity.ok("Medicine updated");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
