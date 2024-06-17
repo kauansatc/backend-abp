@@ -48,23 +48,29 @@ public class SymptonService {
         }
 
         var correlations = correlationRepo.findAllBySympton(symptonName);
-        if (correlations.length == 1) {
-            if (force) {
-                var medicine = medicineRepo.findByName(correlations[0].getMedicine());
-                medicineRepo.delete(medicine);
-                correlationRepo.delete(correlations[0]);
-            } else {
-                throw new IllegalArgumentException(
-                        "Deleting sympton " + symptonName
-                                + " will delete medicines only associated to it. (Hint: use ?force=true to delete them with the sympton)");
+
+        boolean isOnlyCorrelated = true;
+        for (var cor : correlations) {
+            var otherCorrelations = correlationRepo.findAllByMedicine(cor.getMedicine());
+            if (otherCorrelations.length > 1) {
+                isOnlyCorrelated = false;
+                break;
             }
+        }
+
+        if (isOnlyCorrelated) {
+            if (!force) {
+                throw new IllegalArgumentException("Sympton " + symptonName
+                        + " is the only sympton correlated to some medicine. Use force to delete it");
+            }
+
+            var medicine = medicineRepo.findByName(correlations[0].getMedicine());
+            medicineRepo.delete(medicine);
         }
 
         for (var cor : correlations) {
             correlationRepo.delete(cor);
         }
-
         symptonRepo.delete(sympton);
     }
-
 }

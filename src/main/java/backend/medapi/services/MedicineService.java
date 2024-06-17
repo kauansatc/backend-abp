@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import backend.medapi.dtos.MedicineDto;
+import backend.medapi.dtos.MedicineDtoOpt;
 import backend.medapi.dtos.MedicineDtoReq;
 import backend.medapi.models.Correlation;
 import backend.medapi.models.Medicine;
@@ -85,5 +86,59 @@ public class MedicineService {
         }
 
         medicineRepo.delete(medicine);
+    }
+
+    public void update(String name, MedicineDtoOpt body) {
+        var medicine = medicineRepo.findByName(name);
+        if (medicine == null) {
+            throw new IllegalArgumentException("Medicine " + name + " does not exist");
+        }
+
+        if (body.name() != null) {
+            var newMedicine = medicineRepo.findByName(body.name());
+            if (newMedicine != null) {
+                throw new IllegalArgumentException("Medicine " + body.name() + " already exists");
+            }
+
+            medicine.setName(body.name());
+        }
+
+        if (body.treatsFor() != null) {
+            for (var symptonName : body.treatsFor()) {
+                if (symptonRepo.findByName(symptonName) == null) {
+                    if (body.handleNew() != null && body.handleNew()) {
+                        var sympton = new Sympton();
+                        sympton.setName(symptonName);
+                        symptonRepo.save(sympton);
+
+                        var cor = new Correlation();
+                        cor.setMedicine(medicine.getName());
+                        cor.setSympton(symptonName);
+                        correlationRepo.save(cor);
+
+                        continue;
+                    }
+
+                    throw new IllegalArgumentException("Sympton " + symptonName + " does not exist");
+                }
+            }
+
+            for (var cor : correlationRepo.findAllByMedicine(medicine.getName())) {
+                correlationRepo.delete(cor);
+            }
+
+            for (var symptonName : body.treatsFor()) {
+                var cor = new Correlation();
+                cor.setMedicine(medicine.getName());
+                cor.setSympton(symptonName);
+                correlationRepo.save(cor);
+            }
+        }
+
+        if (body.needsPrescription() != null) {
+            medicine.setNeedsPrescription(body.needsPrescription());
+        }
+
+        medicineRepo.save(medicine);
     }
 }
