@@ -27,35 +27,31 @@ public class MedicineController {
 
     @PostMapping("/medicines")
     public ResponseEntity<?> create(@RequestBody @Valid NewMedicineDto newMedicineDto) {
-        if (medicineService.exists(newMedicineDto.name())) {
-            return ResponseEntity.badRequest().body("Medicine already exists");
+        try {
+            medicineService.create(newMedicineDto);
+            return ResponseEntity.ok("Medicine created");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        medicineService.create(newMedicineDto);
-        return ResponseEntity.ok("Medicine created");
     }
 
     @DeleteMapping("/medicines/{name}")
     public ResponseEntity<?> delete(@PathVariable String name) {
-        if (!medicineService.exists(name)) {
-            return ResponseEntity.badRequest().body("Medicine does not exist");
+        try {
+            medicineService.delete(name);
+            return ResponseEntity.ok("Medicine deleted");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        if (!medicineService.delete(name)) {
-            return ResponseEntity.badRequest().body("Failed to delete medicine");
-        }
-
-        return ResponseEntity.ok("Medicine deleted");
     }
 
     @PatchMapping("/medicines")
     public ResponseEntity<?> update(@RequestBody @Valid NewMedicineDto newMedicineDto) {
-        var success = medicineService.update(newMedicineDto);
-
-        if (!success) {
-            return ResponseEntity.badRequest().body("Failed to update medicine");
+        try {
+            medicineService.update(newMedicineDto);
+            return ResponseEntity.ok("Medicine updated");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        return ResponseEntity.ok("Medicine updated");
     }
 }

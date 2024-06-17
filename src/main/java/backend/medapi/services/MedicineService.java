@@ -29,6 +29,10 @@ public class MedicineService {
     }
 
     public void create(@Valid NewMedicineDto newMedicineDto) {
+        if (exists(newMedicineDto.name())) {
+            throw new IllegalArgumentException("Medicine already exists");
+        }
+
         var medicine = new Medicine();
         medicine.setName(newMedicineDto.name());
         medicine.setNeedsPrescription(newMedicineDto.needsPrescription());
@@ -46,23 +50,21 @@ public class MedicineService {
         medicineRepo.save(medicine);
     }
 
-    public boolean delete(String name) {
+    public void delete(String name) {
         var medicine = medicineRepo.findByName(name);
-        if (medicine != null) {
-            medicineRepo.delete(medicine);
-            return true;
+        if (medicine == null) {
+            throw new IllegalArgumentException("Medicine does not exist");
         }
-        return false;
+        medicineRepo.delete(medicine);
     }
 
-    public boolean update(@Valid NewMedicineDto newMedicineDto) {
+    public void update(@Valid NewMedicineDto newMedicineDto) {
         var medicine = medicineRepo.findByName(newMedicineDto.name());
         if (medicine == null) {
-            return false;
+            throw new IllegalArgumentException("Medicine does not exist");
         }
 
         medicineRepo.delete(medicine);
         medicineRepo.save(medicine);
-        return true;
     }
 }
