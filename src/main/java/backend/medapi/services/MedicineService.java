@@ -72,4 +72,18 @@ public class MedicineService {
 
         medicineRepo.save(medicine);
     }
+
+    public void delete(String name) {
+        var medicine = medicineRepo.findByName(name);
+
+        if (medicine == null) {
+            throw new IllegalArgumentException("Medicine " + name + " does not exist");
+        }
+
+        for (var cor : correlationRepo.findAllByMedicine(name)) {
+            correlationRepo.delete(cor);
+        }
+
+        medicineRepo.delete(medicine);
+    }
 }
