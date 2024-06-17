@@ -1,11 +1,8 @@
 package backend.medapi.models;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -13,8 +10,6 @@ import jakarta.persistence.Table;
 @Table(name = "medicine")
 public class Medicine {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
     private String name;
     private boolean needsPrescription;
     private ArrayList<String> treatsFor;
