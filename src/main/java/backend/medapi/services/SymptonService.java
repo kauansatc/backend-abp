@@ -6,8 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import backend.medapi.models.Correlation;
-import backend.medapi.models.Medicine;
 import backend.medapi.models.Sympton;
 import backend.medapi.repositories.CorrelationRepo;
 import backend.medapi.repositories.MedicineRepo;
