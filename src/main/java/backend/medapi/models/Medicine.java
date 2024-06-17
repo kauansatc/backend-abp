@@ -1,5 +1,6 @@
 package backend.medapi.models;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import jakarta.persistence.Entity;
@@ -16,7 +17,7 @@ public class Medicine {
     private UUID id;
     private String name;
     private boolean needsPrescription;
-    private String[] treatsFor;
+    private ArrayList<String> treatsFor;
 
     public void setName(String name) {
         this.name = name;
@@ -34,11 +35,11 @@ public class Medicine {
         return needsPrescription;
     }
 
-    public String[] getTreatsFor() {
+    public ArrayList<String> getTreatsFor() {
         return treatsFor;
     }
 
-    public void setTreatsFor(String[] treatsFor) {
+    public void setTreatsFor(ArrayList<String> treatsFor) {
         this.treatsFor = treatsFor;
     }
 }

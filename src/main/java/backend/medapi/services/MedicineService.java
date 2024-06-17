@@ -92,7 +92,7 @@ public class MedicineService {
             medicine.setNeedsPrescription(updateDto.needsPrescription());
 
         if (updateDto.treatsFor() != null) {
-            if (updateDto.treatsFor().length == 0) {
+            if (updateDto.treatsFor().size() == 0) {
                 throw new IllegalArgumentException("Medicine must treat at least one sympton");
             }
             for (String symptonName : updateDto.treatsFor()) {
