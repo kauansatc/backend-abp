@@ -2,18 +2,14 @@ package backend.medapi.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import backend.medapi.dtos.NewMedicineDto;
-import backend.medapi.dtos.UpdateMedicineDto;
+import backend.medapi.dtos.MedicineDto;
+import backend.medapi.dtos.MedicineDtoReq;
 import backend.medapi.services.MedicineService;
-import jakarta.validation.Valid;
 
 @RestController
 public class MedicineController {
@@ -27,30 +23,10 @@ public class MedicineController {
     }
 
     @PostMapping("/medicines")
-    public ResponseEntity<?> create(@RequestBody @Valid NewMedicineDto newDto) {
+    public ResponseEntity<?> add(@RequestBody MedicineDtoReq body) {
         try {
-            medicineService.create(newDto);
-            return ResponseEntity.ok("Medicine created");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/medicines/{name}")
-    public ResponseEntity<?> delete(@PathVariable String name) {
-        try {
-            medicineService.delete(name);
-            return ResponseEntity.ok("Medicine deleted");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @PatchMapping("/medicines/{name}")
-    public ResponseEntity<?> update(@PathVariable String name, @RequestBody @Valid UpdateMedicineDto updateDto) {
-        try {
-            medicineService.update(name, updateDto);
-            return ResponseEntity.ok("Medicine updated");
+            medicineService.add(body);
+            return ResponseEntity.ok("Medicine added successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

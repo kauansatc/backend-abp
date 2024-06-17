@@ -12,7 +12,6 @@ public class Medicine {
     @Id
     private String name;
     private boolean needsPrescription;
-    private ArrayList<String> treatsFor;
 
     public void setName(String name) {
         this.name = name;
@@ -28,13 +27,5 @@ public class Medicine {
 
     public boolean getNeedsPrescription() {
         return needsPrescription;
-    }
-
-    public ArrayList<String> getTreatsFor() {
-        return treatsFor;
-    }
-
-    public void setTreatsFor(ArrayList<String> treatsFor) {
-        this.treatsFor = treatsFor;
     }
 }

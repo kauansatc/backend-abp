@@ -1,11 +1,9 @@
 package backend.medapi.repositories;
 
-import java.util.UUID;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import backend.medapi.models.Sympton;
 
-public interface SymptonRepo extends JpaRepository<Sympton, UUID> {
+public interface SymptonRepo extends JpaRepository<Sympton, String> {
     Sympton findByName(String name);
 }
