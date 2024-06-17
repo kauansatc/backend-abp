@@ -1,34 +1,42 @@
 # medAPI
+	
+## Requisitos 
+- [x] Desenvolvido utilizando o framework Spring;
+- [ ] Possui:
+    - [ ] entre três e sete `models`;
+    - [x] dois ou três `services`;
+    - [x] dois ou três `controllers`;
+- [x] Foi disponibilizado em repositório git público e acessível;
+- [ ] Pode ser executado a partir de um container docker configurado;
+- [ ] Possui um `README.md` com toda a documentação necessária para executar e manipular a aplicação (exemplos de requisições);
+- [ ] Fornece configurações para execução rápida;
+- [ ] Possui código bem identado e projeto organizado;
+- [ ] Faz a paginação de entidades no `GET ALL`;
+- [x] Valida e trata de erros do cliente;
+- [x] Segue os princípios `REST`;
+
 **Equipe**: Kauan Fontanela e Lucas Adriano
 
-## models
-- medicine
-	- name
-    - treats_for
+## ROUTES
+### `GET` medicines
+```jsonc
+[
+	{
+		"name": "string",
+		"needsPrescription": true | false,
+    	"treatsFor": [
+			"sympton1", 
+			"sympton2", 
+			...
+		]
+	},
+	...
+]
+```
 
-- prescription 
-	- medicine
-	- dose
-	- interval 
-	- full_period
-
-- disease
-	- name
-	- symptons         
-
-## services 
-- disease
-	- diagnosis
-
-- prescption
-    - treat_for
-
-## controller
-- medicines CRUD
-	- GET
-	- POST
-	- PUT
-	- DELETE
-- consult
-	- GET disease q=symptons r=possible_diseases
-	- GET treatment q=possible_diseases r=best_treatment
+### sympton
+```jsonc
+{
+	"name": "string",	
+}
+```
