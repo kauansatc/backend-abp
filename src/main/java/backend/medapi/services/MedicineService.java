@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 
 import backend.medapi.dtos.NewMedicineDto;
 import backend.medapi.dtos.UpdateMedicineDto;
-import backend.medapi.models.Disease;
+import backend.medapi.models.Sympton;
 import backend.medapi.models.Medicine;
-import backend.medapi.repositories.DiseaseRepo;
+import backend.medapi.repositories.SymptonRepo;
 import backend.medapi.repositories.MedicineRepo;
 import io.micrometer.common.lang.Nullable;
 import jakarta.validation.Valid;
@@ -21,20 +21,20 @@ public class MedicineService {
     MedicineRepo medicineRepo;
 
     @Autowired
-    DiseaseRepo diseaseRepo;
+    SymptonRepo symptonRepo;
 
-    private void AssureDiseaseExists(String name, @Nullable Boolean registerIfNew) {
+    private void AssureSymptonExists(String name, @Nullable Boolean registerIfNew) {
         if (name.isEmpty())
-            throw new IllegalArgumentException("Disease name cannot be empty");
+            throw new IllegalArgumentException("Sympton name cannot be empty");
 
-        var disease = diseaseRepo.findByName(name);
-        if (disease == null) {
+        var sympton = symptonRepo.findByName(name);
+        if (sympton == null) {
             if (registerIfNew != null && registerIfNew) {
-                disease = new Disease();
-                disease.setName(name);
-                diseaseRepo.save(disease);
+                sympton = new Sympton();
+                sympton.setName(name);
+                symptonRepo.save(sympton);
             } else {
-                throw new IllegalArgumentException("Disease not found: " + name);
+                throw new IllegalArgumentException("Sympton not found: " + name);
             }
         }
     }
@@ -56,8 +56,8 @@ public class MedicineService {
         medicine.setName(newDto.name());
         medicine.setNeedsPrescription(newDto.needsPrescription());
 
-        for (String diseaseName : newDto.treatsFor()) {
-            AssureDiseaseExists(diseaseName, newDto.registerNewDiseases());
+        for (String symptonName : newDto.treatsFor()) {
+            AssureSymptonExists(symptonName, newDto.registerNewSymptons());
         }
         medicine.setTreatsFor(newDto.treatsFor());
 
@@ -93,10 +93,10 @@ public class MedicineService {
 
         if (updateDto.treatsFor() != null) {
             if (updateDto.treatsFor().length == 0) {
-                throw new IllegalArgumentException("Medicine must treat at least one disease");
+                throw new IllegalArgumentException("Medicine must treat at least one sympton");
             }
-            for (String diseaseName : updateDto.treatsFor()) {
-                AssureDiseaseExists(diseaseName, updateDto.registerNewDiseases());
+            for (String symptonName : updateDto.treatsFor()) {
+                AssureSymptonExists(symptonName, updateDto.registerNewSymptons());
             }
             medicine.setTreatsFor(updateDto.treatsFor());
         }

@@ -9,8 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "disease")
-public class Disease {
+@Table(name = "sympton")
+public class Sympton {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
