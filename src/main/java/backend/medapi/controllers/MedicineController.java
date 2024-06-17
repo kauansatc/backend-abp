@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import backend.medapi.dtos.MedicineDto;
 import backend.medapi.dtos.MedicineDtoReq;
 import backend.medapi.services.MedicineService;
 

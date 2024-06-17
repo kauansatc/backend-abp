@@ -1,6 +1,8 @@
 package backend.medapi.models;
 
+import jakarta.annotation.Generated;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -8,6 +10,7 @@ import jakarta.persistence.Table;
 @Table(name = "medicine-sympton")
 public class Correlation {
     @Id
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)
     private int id;
     private String medicine;
     private String sympton;

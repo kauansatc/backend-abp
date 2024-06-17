@@ -2,7 +2,6 @@ package backend.medapi.controllers;
 
 import java.util.ArrayList;
 
-import org.hibernate.query.IllegalMutationQueryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import backend.medapi.services.MedicineService;
 import backend.medapi.services.SymptonService;
 
 @RestController
@@ -21,17 +19,31 @@ public class SymptonController {
 
     @GetMapping("/symptons")
     public ResponseEntity<?> getAll(@RequestParam(required = false) String medicine) {
-        if (medicine == null) {
-            var list = symptonService.getAll();
-            return ResponseEntity.ok(list);
-        }
+        try {
+            if (medicine == null) {
+                var list = symptonService.getAll();
+                var res = new ArrayList<>();
+                for (var sympton : list) {
+                    res.add(sympton.getName());
+                }
+                return ResponseEntity.ok(res);
+            }
 
-        return ResponseEntity.ok("Not implemented");
-        // try {
-        // var list = symptonService.getAll(medicine);
-        // return ResponseEntity.ok(list);
-        // } catch (IllegalMutationQueryException e) {
-        // return ResponseEntity.badRequest().body(e.getMessage());
-        // }
+            var list = symptonService.getAllByMedicine(medicine);
+            return ResponseEntity.ok(list);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/symptons/{name}")
+    public ResponseEntity<?> delete(@PathVariable String name, @RequestParam(required = false) Boolean force) {
+        try {
+            symptonService.delete(name, force != null && force);
+            return ResponseEntity.ok("Sympton " + name + " deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
