@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import backend.medapi.dtos.MedicineDto;
 import backend.medapi.dtos.MedicineDtoOpt;
-import backend.medapi.dtos.MedicineDtoReq;
 import backend.medapi.models.Correlation;
 import backend.medapi.models.Medicine;
 import backend.medapi.models.Sympton;
@@ -46,14 +45,14 @@ public class MedicineService {
         return res;
     }
 
-    public void add(MedicineDtoReq medicineDto) {
+    public void add(MedicineDto medicineDto, Boolean handleNew) {
         if (medicineRepo.findByName(medicineDto.name()) != null) {
             throw new IllegalArgumentException("Medicine " + medicineDto.name() + " already exists");
         }
 
         for (var symptonName : medicineDto.treatsFor()) {
             if (symptonRepo.findByName(symptonName) == null) {
-                if (medicineDto.handleNew() != null && medicineDto.handleNew()) {
+                if (handleNew != null && handleNew) {
                     var sympton = new Sympton();
                     sympton.setName(symptonName);
                     symptonRepo.save(sympton);
