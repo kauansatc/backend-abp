@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import backend.medapi.dtos.MedicineDto;
 import backend.medapi.dtos.MedicineDtoOpt;
 import backend.medapi.services.MedicineService;
+import jakarta.validation.Valid;
 
 @RestController
 public class MedicineController {
@@ -28,7 +29,7 @@ public class MedicineController {
     }
 
     @PostMapping("/medicines")
-    public ResponseEntity<?> add(@RequestBody MedicineDto body,
+    public ResponseEntity<?> add(@RequestBody @Valid MedicineDto body,
             @RequestParam(defaultValue = "false") Boolean handleNew) {
         try {
             medicineService.add(body, handleNew);
@@ -49,7 +50,7 @@ public class MedicineController {
     }
 
     @PatchMapping("/medicines/{name}")
-    public ResponseEntity<?> update(@PathVariable String name, @RequestBody MedicineDtoOpt body) {
+    public ResponseEntity<?> update(@PathVariable String name, @RequestBody @Valid MedicineDtoOpt body) {
         try {
             medicineService.update(name, body);
             return ResponseEntity.ok("Medicine updated successfully");
