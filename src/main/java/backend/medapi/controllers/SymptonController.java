@@ -18,10 +18,12 @@ public class SymptonController {
     SymptonService symptonService;
 
     @GetMapping("/symptons")
-    public ResponseEntity<?> getAll(@RequestParam(required = false) String medicine) {
+    public ResponseEntity<?> getAll(@RequestParam(required = false) String medicine,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size) {
         try {
             if (medicine == null) {
-                var list = symptonService.getAll();
+                var list = symptonService.getAll(page, size);
                 var res = new ArrayList<>();
                 for (var sympton : list) {
                     res.add(sympton.getName());

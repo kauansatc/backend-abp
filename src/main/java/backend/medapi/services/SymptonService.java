@@ -10,6 +10,7 @@ import backend.medapi.models.Sympton;
 import backend.medapi.repositories.CorrelationRepo;
 import backend.medapi.repositories.MedicineRepo;
 import backend.medapi.repositories.SymptonRepo;
+import org.springframework.data.domain.*;
 
 @Service
 public class SymptonService {
@@ -22,8 +23,10 @@ public class SymptonService {
     @Autowired
     CorrelationRepo correlationRepo;
 
-    public List<Sympton> getAll() {
-        return symptonRepo.findAll();
+    public List<Sympton> getAll(Integer pageNum, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        Page<Sympton> page = symptonRepo.findAll(pageable);
+        return page.getContent();
     }
 
     public List<Sympton> getAllByMedicine(String medicine) {
