@@ -3,6 +3,7 @@ package backend.medapi.services;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import backend.medapi.dtos.MedicineDto;
@@ -26,17 +27,19 @@ public class MedicineService {
     @Autowired
     SymptonRepo symptonRepo;
 
-    public ArrayList<MedicineDto> getAll() {
+    public ArrayList<MedicineDto> getAll(Integer pageNum, Integer size) {
         ArrayList<MedicineDto> res = new ArrayList<>();
 
-        for (Medicine medicine : medicineRepo.findAll()) {
+        Pageable pageable = PageRequest.of(pageNum, size);
+        Page<Medicine> page = medicineRepo.findAll(pageable);
+
+        for (Medicine medicine : page) {
             ArrayList<String> treatsFor = new ArrayList<>();
             var correlations = correlationRepo.findAllByMedicine(medicine.getName());
             for (Correlation cor : correlations) {
                 treatsFor.add(cor.getSympton());
             }
             var dto = new MedicineDto(medicine.getName(), treatsFor, medicine.getNeedsPrescription());
-
             res.add(dto);
         }
 
