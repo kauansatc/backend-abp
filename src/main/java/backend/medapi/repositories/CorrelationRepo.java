@@ -9,7 +9,7 @@ public interface CorrelationRepo extends JpaRepository<Correlation, String> {
 
     Correlation[] findAllByMedicine(String name);
 
-    Correlation findBySympton(String name);
+    Correlation findBySymptom(String name);
 
-    Correlation[] findAllBySympton(String name);
+    Correlation[] findAllBySymptom(String name);
 }

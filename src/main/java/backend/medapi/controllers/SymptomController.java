@@ -12,25 +12,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import backend.medapi.models.Sympton;
-import backend.medapi.services.SymptonService;
+import backend.medapi.models.Symptom;
+import backend.medapi.services.SymptomService;
 
 @RestController
-public class SymptonController {
+public class SymptomController {
     @Autowired
-    SymptonService symptonService;
+    SymptomService symptomService;
 
-    @GetMapping("/symptons")
+    @GetMapping("/symptoms")
     public ResponseEntity<?> getAll(@RequestParam(required = false) String medicine,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size) {
         try {
-            List<Sympton> list = new ArrayList<>();
+            List<Symptom> list = new ArrayList<>();
 
             if (medicine == null) {
-                list = symptonService.getAll(page, size);
+                list = symptomService.getAll(page, size);
             } else {
-                list = symptonService.getAllByMedicine(medicine);
+                list = symptomService.getAllByMedicine(medicine);
             }
 
             var res = new ArrayList<>();
@@ -44,20 +44,20 @@ public class SymptonController {
         }
     }
 
-    @PatchMapping("/symptons/{name}")
+    @PatchMapping("/symptoms/{name}")
     public ResponseEntity<?> update(@PathVariable String name, @RequestParam(required = true) String newName) {
         try {
-            symptonService.update(name, newName);
+            symptomService.update(name, newName);
             return ResponseEntity.ok("Sympton " + name + " updated successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @DeleteMapping("/symptons/{name}")
+    @DeleteMapping("/symptoms/{name}")
     public ResponseEntity<?> delete(@PathVariable String name, @RequestParam(required = false) Boolean force) {
         try {
-            symptonService.delete(name, force != null && force);
+            symptomService.delete(name, force != null && force);
             return ResponseEntity.ok("Sympton " + name + " deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

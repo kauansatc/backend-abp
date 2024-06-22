@@ -11,7 +11,7 @@ public record MedicineDtoOpt(@Nullable String name, @Nullable ArrayList<String> 
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
         if (treatsFor != null && treatsFor.isEmpty()) {
-            throw new IllegalArgumentException("Needs to treat for at least one sympton");
+            throw new IllegalArgumentException("Needs to treat for at least one symptom");
         }
     }
 }

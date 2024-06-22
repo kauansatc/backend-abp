@@ -6,13 +6,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "medicine-sympton")
+@Table(name = "medicine-symptom")
 public class Correlation {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)
     private int id;
     private String medicine;
-    private String sympton;
+    private String symptom;
 
     public String getMedicine() {
         return medicine;
@@ -22,11 +22,11 @@ public class Correlation {
         this.medicine = medicine;
     }
 
-    public String getSympton() {
-        return sympton;
+    public String getSymptom() {
+        return symptom;
     }
 
-    public void setSympton(String sympton) {
-        this.sympton = sympton;
+    public void setSymptom(String symptom) {
+        this.symptom = symptom;
     }
 }

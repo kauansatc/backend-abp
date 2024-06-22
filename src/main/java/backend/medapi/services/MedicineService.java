@@ -10,10 +10,10 @@ import backend.medapi.dtos.MedicineDto;
 import backend.medapi.dtos.MedicineDtoOpt;
 import backend.medapi.models.Correlation;
 import backend.medapi.models.Medicine;
-import backend.medapi.models.Sympton;
+import backend.medapi.models.Symptom;
 import backend.medapi.repositories.CorrelationRepo;
 import backend.medapi.repositories.MedicineRepo;
-import backend.medapi.repositories.SymptonRepo;
+import backend.medapi.repositories.SymptomRepo;
 
 @Service
 public class MedicineService {
@@ -24,7 +24,7 @@ public class MedicineService {
     CorrelationRepo correlationRepo;
 
     @Autowired
-    SymptonRepo symptonRepo;
+    SymptomRepo symptomRepo;
 
     public ArrayList<MedicineDto> getAll(Integer pageNum, Integer size) {
         ArrayList<MedicineDto> res = new ArrayList<>();
@@ -36,7 +36,7 @@ public class MedicineService {
             ArrayList<String> treatsFor = new ArrayList<>();
             var correlations = correlationRepo.findAllByMedicine(medicine.getName());
             for (Correlation cor : correlations) {
-                treatsFor.add(cor.getSympton());
+                treatsFor.add(cor.getSymptom());
             }
             var dto = new MedicineDto(medicine.getName(), treatsFor, medicine.getNeedsPrescription());
             res.add(dto);
@@ -50,20 +50,20 @@ public class MedicineService {
             throw new IllegalArgumentException("Medicine " + medicineDto.name() + " already exists");
         }
 
-        for (var symptonName : medicineDto.treatsFor()) {
-            if (symptonRepo.findByName(symptonName) == null) {
+        for (var symptomName : medicineDto.treatsFor()) {
+            if (symptomRepo.findByName(symptomName) == null) {
                 if (handleNew == null || !handleNew) {
-                    throw new IllegalArgumentException("Sympton " + symptonName + " does not exist");
+                    throw new IllegalArgumentException("Symptom " + symptomName + " does not exist");
                 }
 
-                var sympton = new Sympton();
-                sympton.setName(symptonName);
-                symptonRepo.save(sympton);
+                var symptom = new Symptom();
+                symptom.setName(symptomName);
+                symptomRepo.save(symptom);
             }
 
             var cor = new Correlation();
             cor.setMedicine(medicineDto.name());
-            cor.setSympton(symptonName);
+            cor.setSymptom(symptomName);
             correlationRepo.save(cor);
         }
 
@@ -104,15 +104,15 @@ public class MedicineService {
         }
 
         if (medicineDto.treatsFor() != null) {
-            for (var symptonName : medicineDto.treatsFor()) {
-                if (symptonRepo.findByName(symptonName) == null) {
+            for (var symptomName : medicineDto.treatsFor()) {
+                if (symptomRepo.findByName(symptomName) == null) {
                     if (handleNew == null || !handleNew) {
-                        throw new IllegalArgumentException("Sympton " + symptonName + " does not exist");
+                        throw new IllegalArgumentException("Symptom " + symptomName + " does not exist");
                     }
 
-                    var sympton = new Sympton();
-                    sympton.setName(symptonName);
-                    symptonRepo.save(sympton);
+                    var symptom = new Symptom();
+                    symptom.setName(symptomName);
+                    symptomRepo.save(symptom);
                 }
             }
 
@@ -120,10 +120,10 @@ public class MedicineService {
                 correlationRepo.delete(cor);
             }
 
-            for (var symptonName : medicineDto.treatsFor()) {
+            for (var symptomName : medicineDto.treatsFor()) {
                 var cor = new Correlation();
                 cor.setMedicine(medicine.getName());
-                cor.setSympton(symptonName);
+                cor.setSymptom(symptomName);
                 correlationRepo.save(cor);
             }
         }

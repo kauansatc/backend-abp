@@ -6,16 +6,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import backend.medapi.models.Sympton;
+import backend.medapi.models.Symptom;
 import backend.medapi.repositories.CorrelationRepo;
 import backend.medapi.repositories.MedicineRepo;
-import backend.medapi.repositories.SymptonRepo;
+import backend.medapi.repositories.SymptomRepo;
 import org.springframework.data.domain.*;
 
 @Service
-public class SymptonService {
+public class SymptomService {
     @Autowired
-    SymptonRepo symptonRepo;
+    SymptomRepo symptomRepo;
 
     @Autowired
     MedicineRepo medicineRepo;
@@ -23,32 +23,32 @@ public class SymptonService {
     @Autowired
     CorrelationRepo correlationRepo;
 
-    public List<Sympton> getAll(Integer pageNum, Integer pageSize) {
+    public List<Symptom> getAll(Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
-        Page<Sympton> page = symptonRepo.findAll(pageable);
+        Page<Symptom> page = symptomRepo.findAll(pageable);
         return page.getContent();
     }
 
-    public List<Sympton> getAllByMedicine(String medicine) {
+    public List<Symptom> getAllByMedicine(String medicine) {
         var correlations = correlationRepo.findAllByMedicine(medicine);
-        var symptons = new ArrayList<Sympton>();
+        var symptoms = new ArrayList<Symptom>();
 
         for (var cor : correlations) {
-            var sympton = symptonRepo.findByName(cor.getSympton());
-            symptons.add(sympton);
+            var symptom = symptomRepo.findByName(cor.getSymptom());
+            symptoms.add(symptom);
         }
 
-        return symptons;
+        return symptoms;
     }
 
-    public void delete(String symptonName, boolean force) {
-        var sympton = symptonRepo.findByName(symptonName);
+    public void delete(String symptomName, boolean force) {
+        var symptom = symptomRepo.findByName(symptomName);
 
-        if (sympton == null) {
-            throw new IllegalArgumentException("Sympton " + symptonName + " does not exist");
+        if (symptom == null) {
+            throw new IllegalArgumentException("Symptom " + symptomName + " does not exist");
         }
 
-        var correlations = correlationRepo.findAllBySympton(symptonName);
+        var correlations = correlationRepo.findAllBySymptom(symptomName);
         ArrayList<String> exclusevelyCorrelated = new ArrayList<>();
 
         // boolean isOnlyCorrelated = false;
@@ -62,7 +62,7 @@ public class SymptonService {
 
         if (exclusevelyCorrelated.size() != 0) {
             if (!force) {
-                throw new IllegalArgumentException("Some medicines are exclusively treating this sympton: ["
+                throw new IllegalArgumentException("Some medicines are exclusively treating this symptom: ["
                         + String.join(", ", exclusevelyCorrelated) + "].\nUse ?force=true to delete anyway.");
             }
 
@@ -75,24 +75,24 @@ public class SymptonService {
         for (var cor : correlations) {
             correlationRepo.delete(cor);
         }
-        symptonRepo.delete(sympton);
+        symptomRepo.delete(symptom);
     }
 
     public void update(String name, String newName) {
-        if (symptonRepo.findByName(newName) != null)
-            throw new IllegalArgumentException("Sympton " + newName + " already exists.");
+        if (symptomRepo.findByName(newName) != null)
+            throw new IllegalArgumentException("Symptom " + newName + " already exists.");
 
-        var sympton = symptonRepo.findByName(name);
+        var symptom = symptomRepo.findByName(name);
 
-        var newSympton = new Sympton();
-        newSympton.setName(newName);
+        var newSymptom = new Symptom();
+        newSymptom.setName(newName);
 
-        for (var cor : correlationRepo.findAllBySympton(name)) {
-            cor.setSympton(newName);
+        for (var cor : correlationRepo.findAllBySymptom(name)) {
+            cor.setSymptom(newName);
             correlationRepo.save(cor);
         }
 
-        symptonRepo.delete(sympton);
-        symptonRepo.save(newSympton);
+        symptomRepo.delete(symptom);
+        symptomRepo.save(newSymptom);
     }
 }

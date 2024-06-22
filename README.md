@@ -24,7 +24,7 @@ Cria um novo remédio
 	{
 		"name": "string",
 		"needsPrescription": true | false,
-    	"treatsFor": [ "sympton1", "sympton2", ... ]
+    	"treatsFor": [ "symptom1", "symptom2", ... ]
 	},
 	[...]
 ]
@@ -59,7 +59,7 @@ Lista dos remédios registrados
 	{
 		"name": "string",
 		"needsPrescription": true | false,
-    	"treatsFor": [ "sympton1", "sympton2", ... ]
+    	"treatsFor": [ "symptom1", "symptom2", ... ]
 	},
 	[...]
 ]
@@ -92,7 +92,7 @@ Altera as propriedades do remédio definido na rota `{nome}`.
 	{
 		"name": "string" | null,
 		"needsPrescription": true | false | null,
-    	"treatsFor": [ "sympton1", "sympton2", ... ] | null
+    	"treatsFor": [ "symptom1", "symptom2", ... ] | null
 	},
 	...
 ]
@@ -132,7 +132,7 @@ Apaga o remédio definido na rota `{nome}`.
 ---
 
 
-### `GET` sympton
+### `GET` symptom
 
 Lista dos sintomas registrados
 
@@ -140,8 +140,8 @@ Lista dos sintomas registrados
 ```jsonc
 // status 200
 [
-	"sympton1",
-	"sympton2",
+	"symptom1",
+	"symptom2",
 	[...]
 ]
 
@@ -160,7 +160,7 @@ Lista dos sintomas registrados
 ---
 
 
-### `DELETE` /symptons/`{nome}`
+### `DELETE` /symptoms/`{nome}`
 Apaga o síntoma definido na rota `{nome}`.
 > Todo remédio deve tratar ao menos um síntoma, caso haja remédios que tratem exclusivamente deste síntoma, a API retornará um erro. Para contornar este erro, use o query `force=true`, que excluíra, também, os remédios exclusivamente dependentes.
 
