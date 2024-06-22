@@ -24,8 +24,12 @@ public class MedicineController {
     @GetMapping("/medicines")
     public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size) {
-        var list = medicineService.getAll(page, size);
-        return ResponseEntity.ok(list);
+        try {
+            var list = medicineService.getAll(page, size);
+            return ResponseEntity.ok(list);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/medicines")
@@ -50,9 +54,10 @@ public class MedicineController {
     }
 
     @PatchMapping("/medicines/{name}")
-    public ResponseEntity<?> update(@PathVariable String name, @RequestBody @Valid MedicineDtoOpt body) {
+    public ResponseEntity<?> update(@PathVariable String name, @RequestBody @Valid MedicineDtoOpt body,
+            @RequestParam(defaultValue = "false") Boolean handleNew) {
         try {
-            medicineService.update(name, body);
+            medicineService.update(name, body, handleNew);
             return ResponseEntity.ok("Medicine updated successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

@@ -1,6 +1,7 @@
 package backend.medapi.controllers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import backend.medapi.models.Sympton;
 import backend.medapi.services.SymptonService;
 
 @RestController
@@ -22,18 +24,20 @@ public class SymptonController {
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size) {
         try {
+            List<Sympton> list = new ArrayList<>();
+
             if (medicine == null) {
-                var list = symptonService.getAll(page, size);
-                var res = new ArrayList<>();
-                for (var sympton : list) {
-                    res.add(sympton.getName());
-                }
-                return ResponseEntity.ok(res);
+                list = symptonService.getAll(page, size);
+            } else {
+                list = symptonService.getAllByMedicine(medicine);
             }
 
-            var list = symptonService.getAllByMedicine(medicine);
-            return ResponseEntity.ok(list);
+            var res = new ArrayList<>();
+            for (var sympton : list) {
+                res.add(sympton.getName());
+            }
 
+            return ResponseEntity.ok(res);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

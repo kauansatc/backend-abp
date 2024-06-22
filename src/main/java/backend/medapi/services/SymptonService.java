@@ -49,24 +49,27 @@ public class SymptonService {
         }
 
         var correlations = correlationRepo.findAllBySympton(symptonName);
+        ArrayList<String> exclusevelyCorrelated = new ArrayList<>();
 
-        boolean isOnlyCorrelated = true;
+        // boolean isOnlyCorrelated = false;
         for (var cor : correlations) {
             var otherCorrelations = correlationRepo.findAllByMedicine(cor.getMedicine());
-            if (otherCorrelations.length > 1) {
-                isOnlyCorrelated = false;
-                break;
+            if (otherCorrelations.length == 1) {
+                exclusevelyCorrelated.add(cor.getMedicine());
+                continue;
             }
         }
 
-        if (isOnlyCorrelated) {
+        if (exclusevelyCorrelated.size() != 0) {
             if (!force) {
-                throw new IllegalArgumentException("Sympton " + symptonName
-                        + " is the only sympton correlated to some medicine. Use force to delete it");
+                throw new IllegalArgumentException("Some medicines are exclusively treating this sympton: ["
+                        + String.join(", ", exclusevelyCorrelated) + "].\nUse ?force=true to delete anyway.");
             }
 
-            var medicine = medicineRepo.findByName(correlations[0].getMedicine());
-            medicineRepo.delete(medicine);
+            for (var medicineName : exclusevelyCorrelated) {
+                var medicine = medicineRepo.findByName(medicineName);
+                medicineRepo.delete(medicine);
+            }
         }
 
         for (var cor : correlations) {

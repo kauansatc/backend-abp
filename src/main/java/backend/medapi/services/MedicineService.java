@@ -52,21 +52,19 @@ public class MedicineService {
 
         for (var symptonName : medicineDto.treatsFor()) {
             if (symptonRepo.findByName(symptonName) == null) {
-                if (handleNew != null && handleNew) {
-                    var sympton = new Sympton();
-                    sympton.setName(symptonName);
-                    symptonRepo.save(sympton);
-
-                    var cor = new Correlation();
-                    cor.setMedicine(medicineDto.name());
-                    cor.setSympton(symptonName);
-                    correlationRepo.save(cor);
-
-                    continue;
+                if (handleNew == null || !handleNew) {
+                    throw new IllegalArgumentException("Sympton " + symptonName + " does not exist");
                 }
 
-                throw new IllegalArgumentException("Sympton " + symptonName + " does not exist");
+                var sympton = new Sympton();
+                sympton.setName(symptonName);
+                symptonRepo.save(sympton);
             }
+
+            var cor = new Correlation();
+            cor.setMedicine(medicineDto.name());
+            cor.setSympton(symptonName);
+            correlationRepo.save(cor);
         }
 
         var medicine = new Medicine();
@@ -90,38 +88,31 @@ public class MedicineService {
         medicineRepo.delete(medicine);
     }
 
-    public void update(String name, MedicineDtoOpt body) {
+    public void update(String name, MedicineDtoOpt medicineDto, Boolean handleNew) {
         var medicine = medicineRepo.findByName(name);
         if (medicine == null) {
             throw new IllegalArgumentException("Medicine " + name + " does not exist");
         }
 
-        if (body.name() != null) {
-            var newMedicine = medicineRepo.findByName(body.name());
+        if (medicineDto.name() != null) {
+            var newMedicine = medicineRepo.findByName(medicineDto.name());
             if (newMedicine != null) {
-                throw new IllegalArgumentException("Medicine " + body.name() + " already exists");
+                throw new IllegalArgumentException("Medicine " + medicineDto.name() + " already exists");
             }
 
-            medicine.setName(body.name());
+            medicine.setName(medicineDto.name());
         }
 
-        if (body.treatsFor() != null) {
-            for (var symptonName : body.treatsFor()) {
+        if (medicineDto.treatsFor() != null) {
+            for (var symptonName : medicineDto.treatsFor()) {
                 if (symptonRepo.findByName(symptonName) == null) {
-                    if (body.handleNew() != null && body.handleNew()) {
-                        var sympton = new Sympton();
-                        sympton.setName(symptonName);
-                        symptonRepo.save(sympton);
-
-                        var cor = new Correlation();
-                        cor.setMedicine(medicine.getName());
-                        cor.setSympton(symptonName);
-                        correlationRepo.save(cor);
-
-                        continue;
+                    if (handleNew == null || !handleNew) {
+                        throw new IllegalArgumentException("Sympton " + symptonName + " does not exist");
                     }
 
-                    throw new IllegalArgumentException("Sympton " + symptonName + " does not exist");
+                    var sympton = new Sympton();
+                    sympton.setName(symptonName);
+                    symptonRepo.save(sympton);
                 }
             }
 
@@ -129,7 +120,7 @@ public class MedicineService {
                 correlationRepo.delete(cor);
             }
 
-            for (var symptonName : body.treatsFor()) {
+            for (var symptonName : medicineDto.treatsFor()) {
                 var cor = new Correlation();
                 cor.setMedicine(medicine.getName());
                 cor.setSympton(symptonName);
@@ -137,8 +128,8 @@ public class MedicineService {
             }
         }
 
-        if (body.needsPrescription() != null) {
-            medicine.setNeedsPrescription(body.needsPrescription());
+        if (medicineDto.needsPrescription() != null) {
+            medicine.setNeedsPrescription(medicineDto.needsPrescription());
         }
 
         medicineRepo.save(medicine);
