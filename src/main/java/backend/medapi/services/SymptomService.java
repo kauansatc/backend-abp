@@ -79,6 +79,9 @@ public class SymptomService {
     }
 
     public void update(String name, String newName) {
+        if (symptomRepo.findByName(name) == null)
+            throw new IllegalArgumentException("Symptom " + name + " does not exist.");
+
         if (symptomRepo.findByName(newName) != null)
             throw new IllegalArgumentException("Symptom " + newName + " already exists.");
 
