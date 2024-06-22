@@ -50,7 +50,7 @@ Cria um novo remédio.
 	{
 		"name": "string",
 		"needsPrescription": true | false,
-    	"treatsFor": [ "symptom1", "symptom2", ... ]
+    		"treatsFor": [ "symptom1", "symptom2", ... ]
 	},
 	[...]
 ]
@@ -92,7 +92,7 @@ Lista dos remédios registrados.
 	{
 		"name": "string",
 		"needsPrescription": true | false,
-    	"treatsFor": [ "symptom1", "symptom2", ... ]
+    		"treatsFor": [ "symptom1", "symptom2", ... ]
 	},
 	[...]
 ]
@@ -118,7 +118,7 @@ Altera as propriedades do remédio definido na rota `{nome}`.
 	{
 		"name": "string" | null,
 		"needsPrescription": true | false | null,
-    	"treatsFor": [ "symptom1", "symptom2", ... ] | null
+    		"treatsFor": [ "symptom1", "symptom2", ... ] | null
 	},
 	...
 ]
