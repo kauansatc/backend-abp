@@ -5,7 +5,7 @@
 	<div>
 		API de consulta e relação de remédios e síntomas. 
 	</div>
-	<i style="color: navy">
+	<i style="color: royalblue">
 		Equipe: Kauan Fontanela e Lucas Adriano
 	</i>
 </div>
@@ -15,8 +15,34 @@
 
 
 ## ROTAS
+### `GET` /prescription
+Lista de sugestões de remédios condizentes com os síntomas solicitados, acompanhado de uma avaliação equivalente à compatibilidade do remédio com os sintomas.
+> Remédios com 0% de compatibilidade não são listados
+
+#### query options
+|param.|valores|descrição|	
+|---|---|---|
+|symptoms|`[symptom1,...]`|Lista de síntomas|
+
+#### retorna
+```jsonc
+// status 200
+[
+	{
+		"medicine": "string",
+		"matchScore": 100.0, // %
+		"treatsFor": [ "symptom1", "symptom2", ... ]
+	},
+	[...]
+]
+
+// status 400
+"descrição do erro"
+```
+
+
 ### `POST` /medicines
-Cria um novo remédio
+Cria um novo remédio.
 
 #### body
 ```jsonc
@@ -50,7 +76,14 @@ Cria um novo remédio
 
 ### `GET` medicines
 
-Lista dos remédios registrados
+Lista dos remédios registrados.
+
+#### query options
+|param.|valores|descrição|	
+|---|---|---|
+|page|`>=0`|Página a ser exibida|
+|size|`>0`|Número de elementos por página|
+
 
 #### retorna 
 ```jsonc
@@ -67,13 +100,6 @@ Lista dos remédios registrados
 // status 400
 "descrição do erro"
 ```
-
-#### Query
-|param.|valores|descrição|	
-|---|---|---|
-|page|`>=0`|Página a ser exibida|
-|size|`>0`|Número de elementos por página|
-
 
 ---
 
@@ -134,7 +160,14 @@ Apaga o remédio definido na rota `{nome}`.
 
 ### `GET` symptom
 
-Lista dos sintomas registrados
+Lista dos sintomas registrados.
+
+#### query options
+|param.|valores|descrição|	
+|---|---|---|
+|page|`>=0`|Página a ser exibida|
+|size|`>0`|Número de elementos por página|
+|medicine|`"name"`|Filtrar sintoma por remédios (elimina a paginação)|
 
 #### retorna 
 ```jsonc
@@ -149,13 +182,6 @@ Lista dos sintomas registrados
 "descrição do erro"
 ```
 
-#### Query
-|param.|valores|descrição|	
-|---|---|---|
-|page|`>=0`|Página a ser exibida|
-|size|`>0`|Número de elementos por página|
-|medicine|`"name"`|Filtrar sintoma por remédios (elimina a paginação)|
-
 
 ---
 
@@ -164,7 +190,7 @@ Lista dos sintomas registrados
 Apaga o síntoma definido na rota `{nome}`.
 > Todo remédio deve tratar ao menos um síntoma, caso haja remédios que tratem exclusivamente deste síntoma, a API retornará um erro. Para contornar este erro, use o query `force=true`, que excluíra, também, os remédios exclusivamente dependentes.
 
-#### Query
+#### query options
 |param.|valores|descrição|	
 |---|---|---|
 |force|`true`,`false`|Apagar, também, remédios exclusivamentes dependentes deste síntoma|
