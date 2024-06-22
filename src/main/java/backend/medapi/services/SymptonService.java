@@ -77,4 +77,22 @@ public class SymptonService {
         }
         symptonRepo.delete(sympton);
     }
+
+    public void update(String name, String newName) {
+        if (symptonRepo.findByName(newName) != null)
+            throw new IllegalArgumentException("Sympton " + newName + " already exists.");
+
+        var sympton = symptonRepo.findByName(name);
+
+        var newSympton = new Sympton();
+        newSympton.setName(newName);
+
+        for (var cor : correlationRepo.findAllBySympton(name)) {
+            cor.setSympton(newName);
+            correlationRepo.save(cor);
+        }
+
+        symptonRepo.delete(sympton);
+        symptonRepo.save(newSympton);
+    }
 }
