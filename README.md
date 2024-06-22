@@ -11,10 +11,14 @@
 </div>
 
 
----
+## Docker
+```bash
+docker pull ghcr.io/kauansatc/backend-trabalho-final:latest)
+```
 
 
-## ROTAS
+
+## Rotas
 ### `GET` /prescription
 Lista de sugestões de remédios condizentes com os síntomas solicitados, acompanhado de uma avaliação equivalente à compatibilidade do remédio com os sintomas.
 > Remédios com 0% de compatibilidade não são listados
