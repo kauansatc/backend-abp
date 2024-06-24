@@ -13,8 +13,10 @@
 
 ## Docker
 ```bash
-docker pull ghcr.io/kauansatc/backend-trabalho-final:latest)
+docker pull ghcr.io/kauansatc/backend-trabalho-final:latest
+docker run -p $PORTA_DESEJADA:8080 ghcr.io/kauansatc/backend-trabalho-final:latest
 ```
+> substitua `$PORTA_DESEJADA` por sua porta de preferência (certifique-se de que está vazia)
 
 
 
