@@ -3,7 +3,7 @@
 <div align="center" style="margin: 2rem">
 	<img src="img/medicine-health-medical-drug-pharmacy-pill-capsule-svgrepo-com.svg" width=100>
 	<div>
-		API de consulta e relação de remédios e síntomas. 
+		API de consulta e relação de remédios e sintomas. 
 	</div>
 	<i style="color: royalblue">
 		Equipe: Kauan Fontanela e Lucas Adriano
@@ -11,9 +11,9 @@
 </div>
 
 ## Apresentação 
-- Gerenciamento simplesmente de um banco de dados medicinal (remédios);
-- Auxiliar médicos e farmaceuticos na prescrição de drogas;
-- Foco na relação Síntomas -> Remédio;
+- Gerenciamento simples de um banco de dados medicinal (remédios);
+- Auxiliar médicos e farmacêuticos na prescrição de drogas;
+- Foco na relação Sintomas -> Remédio;
 - Implementação de uma tabela de relação inspirada nas boas práticas do SQL a fim de aprimorar a performance da consulta;
   
 |vantagem|desvantagem|
