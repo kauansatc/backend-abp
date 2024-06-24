@@ -16,6 +16,14 @@
 docker pull ghcr.io/kauansatc/backend-trabalho-final:latest)
 ```
 
+## Insomnia
+`https://raw.githubusercontent.com/kauansatc/backend-trabalho-final/main/Insomnia.json`
+![alt text](img/insomnia-impor1.png)
+![alt text](img/insomnia-impor2.png)
+
+
+---
+
 
 
 ## Rotas
