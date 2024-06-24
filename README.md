@@ -10,6 +10,36 @@
 	</i>
 </div>
 
+## Apresentação 
+- Gerenciamento simplesmente de um banco de dados medicinal (remédios);
+- Auxiliar médicos e farmaceuticos na prescrição de drogas;
+- Foco na relação Síntomas -> Remédio;
+- Implementação de uma tabela de relação inspirada nas boas práticas do SQL a fim de aprimorar a performance da consulta;
+  
+|vantagem|desvantagem|
+|---|---|
+|Consulta mais rápida para aplicação principal da API (uso final)|Requisições mais lentas e pesadas para CRUD (manutenção periódica)|
+
+```mermaid
+classDiagram
+
+class Remédio{
+        [PK] nome,
+        [...]
+    }
+class Sintoma{
+        [PK] nome,
+        [...]
+    }
+    class Relaciona{
+        [FK] remédio
+        [FK] sintoma
+    }
+
+Relaciona <|-- Remédio
+Relaciona <|-- Sintoma
+```
+
 
 ## Docker
 ```bash
