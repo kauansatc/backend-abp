@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import backend.medapi.dtos.NewMedicineDto;
-import backend.medapi.dtos.UpdateMedicineDto;
+import backend.medapi.dtos.MedicineDto;
+import backend.medapi.dtos.MedicineDtoOpt;
 import backend.medapi.services.MedicineService;
 import jakarta.validation.Valid;
 
@@ -21,16 +22,22 @@ public class MedicineController {
     MedicineService medicineService;
 
     @GetMapping("/medicines")
-    public ResponseEntity<?> getAll() {
-        var list = medicineService.getAll();
-        return ResponseEntity.ok(list);
+    public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size) {
+        try {
+            var list = medicineService.getAll(page, size);
+            return ResponseEntity.ok(list);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/medicines")
-    public ResponseEntity<?> create(@RequestBody @Valid NewMedicineDto newDto) {
+    public ResponseEntity<?> add(@RequestBody @Valid MedicineDto body,
+            @RequestParam(defaultValue = "false") Boolean handleNew) {
         try {
-            medicineService.create(newDto);
-            return ResponseEntity.ok("Medicine created");
+            medicineService.add(body, handleNew);
+            return ResponseEntity.ok("Medicine added successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -40,17 +47,18 @@ public class MedicineController {
     public ResponseEntity<?> delete(@PathVariable String name) {
         try {
             medicineService.delete(name);
-            return ResponseEntity.ok("Medicine deleted");
+            return ResponseEntity.ok("Medicine deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PatchMapping("/medicines/{name}")
-    public ResponseEntity<?> update(@PathVariable String name, @RequestBody @Valid UpdateMedicineDto updateDto) {
+    public ResponseEntity<?> update(@PathVariable String name, @RequestBody @Valid MedicineDtoOpt body,
+            @RequestParam(defaultValue = "false") Boolean handleNew) {
         try {
-            medicineService.update(name, updateDto);
-            return ResponseEntity.ok("Medicine updated");
+            medicineService.update(name, body, handleNew);
+            return ResponseEntity.ok("Medicine updated successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

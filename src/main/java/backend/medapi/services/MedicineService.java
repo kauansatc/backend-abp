@@ -1,19 +1,19 @@
 package backend.medapi.services;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import backend.medapi.dtos.NewMedicineDto;
-import backend.medapi.dtos.UpdateMedicineDto;
-import backend.medapi.models.Sympton;
+import backend.medapi.dtos.MedicineDto;
+import backend.medapi.dtos.MedicineDtoOpt;
+import backend.medapi.models.Correlation;
 import backend.medapi.models.Medicine;
-import backend.medapi.repositories.SymptonRepo;
+import backend.medapi.models.Symptom;
+import backend.medapi.repositories.CorrelationRepo;
 import backend.medapi.repositories.MedicineRepo;
-import io.micrometer.common.lang.Nullable;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
+import backend.medapi.repositories.SymptomRepo;
 
 @Service
 public class MedicineService {
@@ -21,84 +21,115 @@ public class MedicineService {
     MedicineRepo medicineRepo;
 
     @Autowired
-    SymptonRepo symptonRepo;
+    CorrelationRepo correlationRepo;
 
-    private void AssureSymptonExists(String name, @Nullable Boolean registerIfNew) {
-        if (name.isEmpty())
-            throw new IllegalArgumentException("Sympton name cannot be empty");
+    @Autowired
+    SymptomRepo symptomRepo;
 
-        var sympton = symptonRepo.findByName(name);
-        if (sympton == null) {
-            if (registerIfNew != null && registerIfNew) {
-                sympton = new Sympton();
-                sympton.setName(name);
-                symptonRepo.save(sympton);
-            } else {
-                throw new IllegalArgumentException("Sympton not found: " + name);
+    public ArrayList<MedicineDto> getAll(Integer pageNum, Integer size) {
+        ArrayList<MedicineDto> res = new ArrayList<>();
+
+        Pageable pageable = PageRequest.of(pageNum, size);
+        Page<Medicine> page = medicineRepo.findAll(pageable);
+
+        for (Medicine medicine : page) {
+            ArrayList<String> treatsFor = new ArrayList<>();
+            var correlations = correlationRepo.findAllByMedicine(medicine.getName());
+            for (Correlation cor : correlations) {
+                treatsFor.add(cor.getSymptom());
             }
+            var dto = new MedicineDto(medicine.getName(), treatsFor, medicine.getNeedsPrescription());
+            res.add(dto);
         }
+
+        return res;
     }
 
-    public List<Medicine> getAll() {
-        return medicineRepo.findAll();
-    }
+    public void add(MedicineDto medicineDto, Boolean handleNew) {
+        if (medicineRepo.findByName(medicineDto.name()) != null) {
+            throw new IllegalArgumentException("Medicine " + medicineDto.name() + " already exists");
+        }
 
-    public boolean exists(@NotBlank String name) {
-        return medicineRepo.findByName(name) != null;
-    }
+        for (var symptomName : medicineDto.treatsFor()) {
+            if (symptomRepo.findByName(symptomName) == null) {
+                if (handleNew == null || !handleNew) {
+                    throw new IllegalArgumentException("Symptom " + symptomName + " does not exist");
+                }
 
-    public void create(@Valid NewMedicineDto newDto) {
-        if (exists(newDto.name())) {
-            throw new IllegalArgumentException("Medicine already exists");
+                var symptom = new Symptom();
+                symptom.setName(symptomName);
+                symptomRepo.save(symptom);
+            }
+
+            var cor = new Correlation();
+            cor.setMedicine(medicineDto.name());
+            cor.setSymptom(symptomName);
+            correlationRepo.save(cor);
         }
 
         var medicine = new Medicine();
-        medicine.setName(newDto.name());
-        medicine.setNeedsPrescription(newDto.needsPrescription());
-
-        for (String symptonName : newDto.treatsFor()) {
-            AssureSymptonExists(symptonName, newDto.registerNewSymptons());
-        }
-        medicine.setTreatsFor(newDto.treatsFor());
+        medicine.setName(medicineDto.name());
+        medicine.setNeedsPrescription(medicineDto.needsPrescription());
 
         medicineRepo.save(medicine);
     }
 
     public void delete(String name) {
         var medicine = medicineRepo.findByName(name);
+
         if (medicine == null) {
-            throw new IllegalArgumentException("Medicine does not exist");
+            throw new IllegalArgumentException("Medicine " + name + " does not exist");
         }
+
+        for (var cor : correlationRepo.findAllByMedicine(name)) {
+            correlationRepo.delete(cor);
+        }
+
         medicineRepo.delete(medicine);
     }
 
-    public void update(String name, @Valid UpdateMedicineDto updateDto) {
+    public void update(String name, MedicineDtoOpt medicineDto, Boolean handleNew) {
         var medicine = medicineRepo.findByName(name);
         if (medicine == null) {
-            throw new IllegalArgumentException("Medicine does not exist");
+            throw new IllegalArgumentException("Medicine " + name + " does not exist");
         }
 
-        if (updateDto.name() != null && !updateDto.name().equals(name)) {
-            medicine.setName(updateDto.name());
-            if (exists(updateDto.name())) {
-                throw new IllegalArgumentException("Medicine already exists");
+        if (medicineDto.name() != null) {
+            var newMedicine = medicineRepo.findByName(medicineDto.name());
+            if (newMedicine != null) {
+                throw new IllegalArgumentException("Medicine " + medicineDto.name() + " already exists");
             }
-            if (updateDto.name().isEmpty()) {
-                throw new IllegalArgumentException("Medicine name cannot be empty");
+
+            medicine.setName(medicineDto.name());
+        }
+
+        if (medicineDto.treatsFor() != null) {
+            for (var symptomName : medicineDto.treatsFor()) {
+                if (symptomRepo.findByName(symptomName) == null) {
+                    if (handleNew == null || !handleNew) {
+                        throw new IllegalArgumentException("Symptom " + symptomName + " does not exist");
+                    }
+
+                    var symptom = new Symptom();
+                    symptom.setName(symptomName);
+                    symptomRepo.save(symptom);
+                }
+            }
+
+            for (var cor : correlationRepo.findAllByMedicine(medicine.getName())) {
+                correlationRepo.delete(cor);
+            }
+
+            for (var symptomName : medicineDto.treatsFor()) {
+                var cor = new Correlation();
+                cor.setMedicine(medicine.getName());
+                cor.setSymptom(symptomName);
+                correlationRepo.save(cor);
             }
         }
 
-        if (updateDto.needsPrescription() != null)
-            medicine.setNeedsPrescription(updateDto.needsPrescription());
-
-        if (updateDto.treatsFor() != null) {
-            if (updateDto.treatsFor().size() == 0) {
-                throw new IllegalArgumentException("Medicine must treat at least one sympton");
-            }
-            for (String symptonName : updateDto.treatsFor()) {
-                AssureSymptonExists(symptonName, updateDto.registerNewSymptons());
-            }
-            medicine.setTreatsFor(updateDto.treatsFor());
+        if (medicineDto.needsPrescription() != null) {
+            medicine.setNeedsPrescription(medicineDto.needsPrescription());
         }
 
         medicineRepo.save(medicine);

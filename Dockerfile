@@ -14,7 +14,7 @@ RUN mvn clean package
 
 FROM openjdk:17
 
-EXPOSE 8088
+EXPOSE 8080
 
 COPY --from=build /workspace/target/*.jar app.jar
 

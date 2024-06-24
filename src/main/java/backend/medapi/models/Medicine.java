@@ -1,7 +1,5 @@
 package backend.medapi.models;
 
-import java.util.ArrayList;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -12,7 +10,6 @@ public class Medicine {
     @Id
     private String name;
     private boolean needsPrescription;
-    private ArrayList<String> treatsFor;
 
     public void setName(String name) {
         this.name = name;
@@ -28,13 +25,5 @@ public class Medicine {
 
     public boolean getNeedsPrescription() {
         return needsPrescription;
-    }
-
-    public ArrayList<String> getTreatsFor() {
-        return treatsFor;
-    }
-
-    public void setTreatsFor(ArrayList<String> treatsFor) {
-        this.treatsFor = treatsFor;
     }
 }
